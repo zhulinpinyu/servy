@@ -3,9 +3,24 @@ defmodule Servy.Handler do
     request
     |> parse
     |> log
+    |> rewrite_path
     |> route
+    |> track
     |> format_response
   end
+
+  def track(%{ status: 404 } = conv) do
+    IO.puts "[Warning:] not found"
+    conv
+  end
+
+  def track(conv), do: conv
+
+  def rewrite_path(%{path: "/wildlife"} = conv) do
+    %{conv | path: "/wildthings"}
+  end
+
+  def rewrite_path(conv), do: conv
 
   def log(conv), do: IO.inspect conv
 
@@ -23,23 +38,19 @@ defmodule Servy.Handler do
     }
   end
 
-  def route(conv) do
-    route(conv, conv.method, conv.path)
-  end
-
-  def route(conv, "GET", "/wildthings") do
+  def route(%{method: "GET", path: "/wildthings"} = conv) do
     %{conv | status: 200, resp_body: "Bears, Lions, Tigers"}
   end
 
-  def route(conv, "GET", "/bears") do
+  def route(%{method: "GET", path: "/bears"} = conv) do
     %{conv | status: 200, resp_body: "Bears 熊🐻"}
   end
 
-  def route(conv, "GET", "/bears/" <> id) do
+  def route(%{method: "GET", path: "/bears/" <> id } = conv) do
     %{conv | status: 200, resp_body: "Bears #{id}"}
   end
 
-  def route(conv, _method, path) do
+  def route(%{ path: path } = conv) do
     %{conv | status: 404, resp_body: "Not Found #{path} 😬"}
   end
 
@@ -97,6 +108,16 @@ IO.puts Servy.Handler.handle(request)
 
 request = """
 GET /bigfoot HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+IO.puts Servy.Handler.handle(request)
+
+request = """
+GET /wildlife HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
