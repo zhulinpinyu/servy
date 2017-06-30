@@ -72,6 +72,20 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: "Bears #{id}"}
   end
 
+  def route(%{method: "GET", path: "/about" } = conv) do
+    file =
+      Path.expand("../../pages", __DIR__)
+      |> Path.join("about.html")
+    case File.read(file) do
+      {:ok, content} ->
+        %{conv | status: 200, resp_body: content}
+      {:error, :enoent} ->
+        %{conv | status: 404, resp_body: "file not found"}
+      {:error, reason} ->
+        %{conv | status: 500, resp_body: "Server Internal Error #{reason}"}
+    end
+  end
+
   def route(%{method: "DELETE", path: "/bears/" <> id } = conv) do
     %{conv | status: 200, resp_body: "DELETED Bears #{id}"}
   end
@@ -162,7 +176,6 @@ Accept: */*
 
 IO.puts Servy.Handler.handle(request)
 
-
 request = """
 GET /bears?id=1 HTTP/1.1
 Host: example.com
@@ -176,3 +189,13 @@ IO.puts Servy.Handler.handle(request)
 Logger.info "It's lunchtime somewhere."
 Logger.warn "Do we have a problem, Houston?"
 Logger.error "Danger Will Robinson!"
+
+request = """
+GET /about HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+IO.puts Servy.Handler.handle(request)
