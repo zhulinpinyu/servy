@@ -86,6 +86,13 @@ defmodule Servy.Handler do
       |> handle_file(conv)
   end
 
+  def route(%{method: "GET", path: "/pages/" <> file } = conv) do
+      Path.expand("../../pages", __DIR__)
+      |> Path.join(file <> ".html")
+      |> File.read
+      |> handle_file(conv)
+  end
+
   def route(%{method: "DELETE", path: "/bears/" <> id } = conv) do
     %{conv | status: 200, resp_body: "DELETED Bears #{id}"}
   end
@@ -215,6 +222,26 @@ IO.puts Servy.Handler.handle(request)
 
 request = """
 GET /bears/new HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+IO.puts Servy.Handler.handle(request)
+
+request = """
+GET /pages/faq HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+IO.puts Servy.Handler.handle(request)
+
+request = """
+GET /pages/me HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
