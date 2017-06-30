@@ -1,3 +1,5 @@
+require Logger
+
 defmodule Servy.Handler do
   def handle(request) do
     request
@@ -170,3 +172,7 @@ Accept: */*
 """
 
 IO.puts Servy.Handler.handle(request)
+
+Logger.info "It's lunchtime somewhere."
+Logger.warn "Do we have a problem, Houston?"
+Logger.error "Danger Will Robinson!"
