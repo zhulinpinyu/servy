@@ -36,13 +36,13 @@ defmodule Servy.Handler do
     rewrite_path_captures(conv, captures)
   end
 
+  def rewrite_path(conv), do: conv
+
   def rewrite_path_captures(conv, %{"things" => things, "id" => id}) do
     %{conv | path: "/#{things}/#{id}"}
   end
 
   def rewrite_path_captures(conv, nil), do: conv
-
-  def rewrite_path(conv), do: conv
 
   def log(conv), do: IO.inspect conv
 
@@ -73,17 +73,10 @@ defmodule Servy.Handler do
   end
 
   def route(%{method: "GET", path: "/about" } = conv) do
-    file =
       Path.expand("../../pages", __DIR__)
       |> Path.join("about.html")
-    case File.read(file) do
-      {:ok, content} ->
-        %{conv | status: 200, resp_body: content}
-      {:error, :enoent} ->
-        %{conv | status: 404, resp_body: "file not found"}
-      {:error, reason} ->
-        %{conv | status: 500, resp_body: "Server Internal Error #{reason}"}
-    end
+      |> File.read
+      |> handle_file(conv)
   end
 
   def route(%{method: "DELETE", path: "/bears/" <> id } = conv) do
@@ -92,6 +85,18 @@ defmodule Servy.Handler do
 
   def route(%{ path: path } = conv) do
     %{conv | status: 404, resp_body: "Not Found #{path} 😬"}
+  end
+
+  defp handle_file({:ok, content}, conv) do
+    %{conv | status: 200, resp_body: content}
+  end
+
+  defp handle_file({:error, :enoent}, conv) do
+    %{conv | status: 404, resp_body: "file not found"}
+  end
+
+  defp handle_file({:error, reason}, conv) do
+    %{conv | status: 500, resp_body: "Server Internal Error #{reason}"}
   end
 
   def format_response(conv) do
