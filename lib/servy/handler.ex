@@ -50,6 +50,10 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: "Bears #{id}"}
   end
 
+  def route(%{method: "DELETE", path: "/bears/" <> id } = conv) do
+    %{conv | status: 200, resp_body: "DELETED Bears #{id}"}
+  end
+
   def route(%{ path: path } = conv) do
     %{conv | status: 404, resp_body: "Not Found #{path} 😬"}
   end
@@ -118,6 +122,16 @@ IO.puts Servy.Handler.handle(request)
 
 request = """
 GET /wildlife HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+IO.puts Servy.Handler.handle(request)
+
+request = """
+DELETE /bears/1 HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
