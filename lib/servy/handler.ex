@@ -6,6 +6,7 @@ defmodule Servy.Handler do
     Http Process
   """
   import Servy.Plugins, only: [log: 1, rewrite_path: 1, track: 1]
+  import Servy.FileHandler, only: [handle_file: 2]
 
   @pages_path Path.expand("../../pages", __DIR__)
 
@@ -81,18 +82,6 @@ defmodule Servy.Handler do
 
   def route(%{ path: path } = conv) do
     %{conv | status: 404, resp_body: "Not Found #{path} 😬"}
-  end
-
-  defp handle_file({:ok, content}, conv) do
-    %{conv | status: 200, resp_body: content}
-  end
-
-  defp handle_file({:error, :enoent}, conv) do
-    %{conv | status: 404, resp_body: "file not found"}
-  end
-
-  defp handle_file({:error, reason}, conv) do
-    %{conv | status: 500, resp_body: "Server Internal Error #{reason}"}
   end
 
   def format_response(conv) do
