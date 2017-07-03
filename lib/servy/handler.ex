@@ -5,6 +5,7 @@ defmodule Servy.Handler do
   @moduledoc """
     Http Process
   """
+  import Servy.Plugins, only: [log: 1, rewrite_path: 1, track: 1]
 
   @pages_path Path.expand("../../pages", __DIR__)
 
@@ -26,34 +27,6 @@ defmodule Servy.Handler do
   end
 
   def emojify(conv), do: conv
-
-  @doc "Log 404 status"
-  def track(%{ status: 404 } = conv) do
-    IO.puts "[Warning:] not found"
-    conv
-  end
-
-  def track(conv), do: conv
-
-  def rewrite_path(%{path: "/wildlife"} = conv) do
-    %{conv | path: "/wildthings"}
-  end
-
-  def rewrite_path(%{path: path} = conv) do
-    regex = ~r{\/(?<things>\w+)\?id=(?<id>\d+)}
-    captures = Regex.named_captures(regex, path)
-    rewrite_path_captures(conv, captures)
-  end
-
-  def rewrite_path(conv), do: conv
-
-  def rewrite_path_captures(conv, %{"things" => things, "id" => id}) do
-    %{conv | path: "/#{things}/#{id}"}
-  end
-
-  def rewrite_path_captures(conv, nil), do: conv
-
-  def log(conv), do: IO.inspect conv
 
   def parse(request) do
     [method, path, _] = request
