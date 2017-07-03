@@ -6,9 +6,20 @@ defmodule Servy.Handler do
     Http Process
   """
   import Servy.Plugins, only: [log: 1, rewrite_path: 1, track: 1]
+
+  @doc """
+    import Servy.FileHandler, only: [handle_file: 2]
+    意味着只导入有两个参数的 handle_file函数
+
+    只导入module中的functions
+    import SomeModule, only: :functions
+
+    只导入module中的macros
+    import SomeModule, only: :macros
+  """
   import Servy.FileHandler, only: [handle_file: 2]
 
-  @pages_path Path.expand("../../pages", __DIR__)
+  @pages_path Path.expand("pages", File.cwd!)
 
   @doc "transform request to response"
   def handle(request) do
