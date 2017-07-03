@@ -1,6 +1,14 @@
 require Logger
 
 defmodule Servy.Handler do
+
+  @moduledoc """
+    Http Process
+  """
+
+  @pages_path Path.expand("../../pages", __DIR__)
+
+  @doc "transform request to response"
   def handle(request) do
     request
     |> parse
@@ -19,6 +27,7 @@ defmodule Servy.Handler do
 
   def emojify(conv), do: conv
 
+  @doc "Log 404 status"
   def track(%{ status: 404 } = conv) do
     IO.puts "[Warning:] not found"
     conv
@@ -69,7 +78,7 @@ defmodule Servy.Handler do
   end
 
   def route(%{method: "GET", path: "/bears/new"} = conv) do
-    Path.expand("../../pages", __DIR__)
+    @pages_path
     |> Path.join("form.html")
     |> File.read
     |> handle_file(conv)
@@ -80,14 +89,14 @@ defmodule Servy.Handler do
   end
 
   def route(%{method: "GET", path: "/about" } = conv) do
-      Path.expand("../../pages", __DIR__)
+      @pages_path
       |> Path.join("about.html")
       |> File.read
       |> handle_file(conv)
   end
 
   def route(%{method: "GET", path: "/pages/" <> file } = conv) do
-      Path.expand("../../pages", __DIR__)
+      @pages_path
       |> Path.join(file <> ".html")
       |> File.read
       |> handle_file(conv)
