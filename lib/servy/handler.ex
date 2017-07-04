@@ -80,6 +80,10 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: "DELETED Bears #{id}"}
   end
 
+  def route(%Conv{method: "POST", path: "/bears", params: params} = conv) do
+    %{conv | status: 200, resp_body: "Created a #{params["type"]} bear named #{params["name"]}!"}
+  end
+
   def route(%Conv{ path: path } = conv) do
     %{conv | status: 404, resp_body: "Not Found #{path} 😬"}
   end
@@ -206,6 +210,19 @@ Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
 
+"""
+
+IO.puts Servy.Handler.handle(request)
+
+request = """
+POST /bears HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 21
+
+name=Baloo&type=Brown
 """
 
 IO.puts Servy.Handler.handle(request)
