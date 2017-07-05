@@ -7,6 +7,7 @@ defmodule Servy.Handler do
   """
 
   alias Servy.Conv
+  alias Servy.BearController
 
   @doc """
     import Servy.FileHandler, only: [handle_file: 2]
@@ -48,7 +49,7 @@ defmodule Servy.Handler do
   end
 
   def route(%Conv{method: "GET", path: "/bears"} = conv) do
-    %{conv | status: 200, resp_body: "Bears 熊🐻"}
+    BearController.index(conv)
   end
 
   def route(%Conv{method: "GET", path: "/bears/new"} = conv) do
@@ -59,7 +60,8 @@ defmodule Servy.Handler do
   end
 
   def route(%Conv{method: "GET", path: "/bears/" <> id } = conv) do
-    %{conv | status: 200, resp_body: "Bears #{id}"}
+    params = Map.put(conv.params, "id", id)
+    BearController.show(conv, params)
   end
 
   def route(%Conv{method: "GET", path: "/about" } = conv) do
@@ -81,7 +83,7 @@ defmodule Servy.Handler do
   end
 
   def route(%Conv{method: "POST", path: "/bears", params: params} = conv) do
-    %{conv | status: 200, resp_body: "Created a #{params["type"]} bear named #{params["name"]}!"}
+    BearController.create(conv, params)
   end
 
   def route(%Conv{ path: path } = conv) do
