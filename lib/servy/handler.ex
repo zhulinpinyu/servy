@@ -113,26 +113,6 @@ Accept: */*
 IO.puts Servy.Handler.handle(request)
 
 request = """
-GET /bears HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-IO.puts Servy.Handler.handle(request)
-
-request = """
-GET /bears/1 HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-IO.puts Servy.Handler.handle(request)
-
-request = """
 GET /bigfoot HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
@@ -226,6 +206,26 @@ Content-Type: application/x-www-form-urlencoded
 Content-Length: 21
 
 name=Baloo&type=Brown
+"""
+
+IO.puts Servy.Handler.handle(request)
+
+request = """
+GET /bears HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+IO.puts Servy.Handler.handle(request)
+
+request = """
+GET /bears/1 HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
 """
 
 IO.puts Servy.Handler.handle(request)

@@ -1,0 +1,2 @@
+<h1>Show Bear</h1>
+<b> Bear <%= bear.name %> isHibernating <%= bear.hibernating %> </b>
