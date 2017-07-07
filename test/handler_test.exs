@@ -1,6 +1,5 @@
 defmodule HandlerTest do
-  use ExUnit.Case
-  doctest Servy.Handler
+  use ExUnit.Case, async: true
 
   alias Servy.Handler
 
