@@ -9,12 +9,10 @@ defmodule Servy do
   ## Examples
 
       iex> Servy.hello
-      :world
+      "Hello, world!"
 
   """
   def hello(name \\ "world") do
     "Hello, #{name}!"
   end
 end
-
-IO.puts Servy.hello
